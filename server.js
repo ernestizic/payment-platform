@@ -1,6 +1,7 @@
 const express = require("express");
 const dotenv = require("dotenv");
 const users = require('./routes/users');
+const account = require("./routes/account")
 
 
 dotenv.config();
@@ -27,6 +28,7 @@ app.get('/', (req, res)=> {
 
 // api routes
 app.use('/api', users);
+app.use('/api', account)
 
 
 const PORT = process.env.PORT || 5000;

@@ -1,9 +1,20 @@
 const express = require("express");
 const User = require("../models/userModel");
+const Wallet = require("../models/walletModel")
 const router = express.Router();
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const auth = require("../middleware/auth");
+
+
+
+// Function to create wallet
+const createWallet =async(id)=> {
+  const wallet = new Wallet({
+    userid: id,
+  })
+  await wallet.save()
+}
 
 // Access: PUBLIC
 // @desc REGISTER A USER
@@ -40,6 +51,9 @@ router.post("/users", async (req, res) => {
         password: hashedPassword,
       };
       const nUser = await User.create(newUser);
+
+      // Create wallet for user
+      createWallet(nUser.id)
 
       jwt.sign(
         { id: nUser._id },
@@ -82,6 +96,7 @@ router.post("/users/login", async (req, res) => {
     }
 
     // Validate password and login
+    const userwallet = await Wallet.find({userid: user.id})
     if (await bcrypt.compare(req.body.password, user.password)) {
       jwt.sign(
         { id: user._id },
@@ -91,7 +106,10 @@ router.post("/users/login", async (req, res) => {
           if (err) throw err;
           return res.status(200).json({
             success: true,
-            data: user,
+            data: {
+              user,
+              userwallet
+            },
             token,
           });
         }
@@ -117,9 +135,15 @@ router.post("/users/login", async (req, res) => {
 router.get("/users", auth, async (req, res) => {
   const user = await User.findById(req.user.id).select("-password");
 
+  const userWallet = await Wallet.find({userid: user.id})
+
   return res.status(200).json({
-    data: user,
+    data: {
+      user,
+      userWallet
+    }
   });
+
 });
 
 module.exports = router;
