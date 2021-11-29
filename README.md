@@ -14,10 +14,11 @@ A fintech solution to help users in Nigeria register and fund their accounts, af
 
 ## API endpoints
 
-- User Registration
-- Account Funding
-- User Details
-- Make payments
+- User Registration http://localhost:5000/api/users
+- User Login http://localhost:5000/api/users/login
+- Account Funding http://localhost:5000/api/user/fundaccount
+- User Details http://localhost:5000/api/users
+- Make payments http://localhost:5000/api/user/payment
 
 ## User Registration
 
